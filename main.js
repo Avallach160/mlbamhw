@@ -3,6 +3,7 @@
     var nextDateToLoad = new Date();
     var getGameDataAttempt = 1;
 
+    //perform async http call
     function httpGetAsync(url, callback){
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() {
@@ -13,6 +14,7 @@
         xmlHttp.send(null);
     }
 
+    //add a 0 to numbers < 10 because mlb api wants 2 digit day and month
     function prependZero(num){
         if (parseInt(num) < 10){
             num = '0' + num;
@@ -20,6 +22,7 @@
         return num.toString();
     }
 
+    //fetch game data and load it into the carousel
     function getGameData(){
         var date = nextDateToLoad;
         var month = prependZero(date.getMonth() + 1);
@@ -27,27 +30,29 @@
         var url = 'http://gdx.mlb.com/components/game/mlb/year_' + date.getFullYear() + '/month_' + month + '/day_' + today + '/master_scoreboard.json';
 
         httpGetAsync(url, function(response){
+            //started playing with loading additional days. it didnt work so well. could be done with more time
             nextDateToLoad.setDate(nextDateToLoad.getDate() + 1);
+            //could use some more information on what possible error codes are returned. this is a pretty dirty way of checking games
             if (response.data.games.game.length > 0){
                 gameData = gameData.concat(response.data.games.game);
-                console.log(gameData);
                 addGamesToCarousel(gameData);
                 getGameDataAttempt = 1;
             }
-            else {
-                //not sure if this is really needed
-                console.log('attempting reload');
-                if (getGameDataAttempt >= 7){
-                    console.warn('There has been an error loading game data for ' + getGameDataAttempt + ' days. Stopping data load.');
-                }
-                else {
-                    getGameDataAttempt++;
-                    getGameData();
-                }
-            }
+            // else {
+            //     //auto retry for loading additional days
+            //     console.log('attempting reload');
+            //     if (getGameDataAttempt >= 7){
+            //         console.warn('There has been an error loading game data for ' + getGameDataAttempt + ' days. Stopping data load.');
+            //     }
+            //     else {
+            //         getGameDataAttempt++;
+            //         getGameData();
+            //     }
+            // }
         })
     }
 
+    //sets styling for currently selected game
     function setActiveGame(currentElement){
         currentElement.className = 'game active animated zoomIn';
         var currentGame = gameData.filter(function(obj){
@@ -66,6 +71,7 @@
         currentElement.appendChild(description);
     }
 
+    //adds an array of games to the main carousel div and sets first element active
     function addGamesToCarousel(games){
         var carousel = document.getElementById('carousel');
 
@@ -95,6 +101,7 @@
         return document.getElementsByClassName('active')[0];
     }
 
+    //when user scrolls to next game, zoom out and reset size
     function resetGameDiv(){
         var current = getCurrentActiveGame();
         current.className = 'game animated zoomOut';
