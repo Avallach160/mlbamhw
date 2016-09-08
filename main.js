@@ -22,11 +22,9 @@
 
     function getGameData(){
         var date = nextDateToLoad;
-        console.log(date);
         var month = prependZero(date.getMonth() + 1);
         var today = prependZero(date.getDate());
         var url = 'http://gdx.mlb.com/components/game/mlb/year_' + date.getFullYear() + '/month_' + month + '/day_' + today + '/master_scoreboard.json';
-        console.log(url);
 
         httpGetAsync(url, function(response){
             nextDateToLoad.setDate(nextDateToLoad.getDate() + 1);
@@ -106,18 +104,22 @@
 
     function scrollLeft(){
         var current = getCurrentActiveGame();
-        resetGameDiv();
-        setActiveGame(current.previousSibling);
+        if (current.previousElementSibling !== null){
+            resetGameDiv();
+            setActiveGame(current.previousElementSibling);
+        }
     }
 
     function scrollRight(){
         var current = getCurrentActiveGame();
-        resetGameDiv();
-        setActiveGame(current.nextSibling);
-
-        if (current.nextSibling.nextSibling.nextSibling === null){
-            getGameData();
+        if (current.nextElementSibling !== null){
+            resetGameDiv();
+            setActiveGame(current.nextElementSibling);
         }
+
+        // if (current.nextSibling.nextSibling.nextSibling === null){
+        //     getGameData();
+        // }
     }
 
     function init(){
