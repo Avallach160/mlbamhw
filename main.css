@@ -59,3 +59,36 @@ p{
     transform: scale(1.25);
     margin-top: -20px;
 }
+
+.animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+
+@keyframes zoomIn {
+    0% {
+        opacity: 0;
+        transform: scale3d(1, 1, .9);
+    }
+    50% {
+        opacity: 1;
+    }
+}
+.zoomIn {
+    animation-name: zoomIn;
+}
+@keyframes zoomOut {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .5;
+        transform: scale3d(.9, .9, .9);
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.zoomOut {
+    animation-name: zoomOut;
+}

@@ -49,7 +49,7 @@
     }
 
     function setActiveGame(currentElement){
-        currentElement.className += ' active';
+        currentElement.className = 'game active animated zoomIn';
         var currentGame = gameData.filter(function(obj){
             if (obj.id === currentElement.getAttribute('id')){
                 return obj;
@@ -97,7 +97,7 @@
 
     function resetGameDiv(){
         var current = getCurrentActiveGame();
-        current.setAttribute('class', 'game');
+        current.className = 'game animated zoomOut';
         current.removeChild(current.lastChild);
         current.removeChild(current.firstChild);
     }
