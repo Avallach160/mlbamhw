@@ -1,5 +1,7 @@
 (function(){
     var gameData = [];
+    var nextDateToLoad = new Date();
+    var getGameDataAttempt = 1;
 
     function httpGetAsync(url, callback){
         var xmlHttp = new XMLHttpRequest();
@@ -18,18 +20,31 @@
         return num.toString();
     }
 
-    function getGameData(date, cb){
-        var month = prependZero(date.getMonth());
+    function getGameData(){
+        var date = nextDateToLoad;
+        console.log(date);
+        var month = prependZero(date.getMonth() + 1);
         var today = prependZero(date.getDate());
         var url = 'http://gdx.mlb.com/components/game/mlb/year_' + date.getFullYear() + '/month_' + month + '/day_' + today + '/master_scoreboard.json';
+        console.log(url);
 
         httpGetAsync(url, function(response){
-            if (typeof cb === 'function'){
-                if (response != undefined){
-                    cb(null, response);
+            nextDateToLoad.setDate(nextDateToLoad.getDate() + 1);
+            if (response.data.games.game.length > 0){
+                gameData = gameData.concat(response.data.games.game);
+                console.log(gameData);
+                addGamesToCarousel(gameData);
+                getGameDataAttempt = 1;
+            }
+            else {
+                //not sure if this is really needed
+                console.log('attempting reload');
+                if (getGameDataAttempt >= 7){
+                    console.warn('There has been an error loading game data for ' + getGameDataAttempt + ' days. Stopping data load.');
                 }
                 else {
-                    cb('No data returned.');
+                    getGameDataAttempt++;
+                    getGameData();
                 }
             }
         })
@@ -37,7 +52,7 @@
 
     function setActiveGame(currentElement){
         currentElement.className += ' active';
-        var currentGame = gameData.game.filter(function(obj){
+        var currentGame = gameData.filter(function(obj){
             if (obj.id === currentElement.getAttribute('id')){
                 return obj;
             }
@@ -53,19 +68,20 @@
         currentElement.appendChild(description);
     }
 
-    function addGamesToCarousel(games, cb){
+    function addGamesToCarousel(games){
         var carousel = document.getElementById('carousel');
 
-        for(var i = 0; i < games.game.length; i++){
+        for(var i = 0; i < games.length; i++){
             var gameDiv = document.createElement('div');
             gameDiv.setAttribute('class','game');
-            gameDiv.setAttribute('id', games.game[i].id);
+            gameDiv.setAttribute('id', games[i].id);
 
-            games.game[i].video_thumbnails.thumbnail.forEach(function(element){
+            games[i].video_thumbnails.thumbnail.forEach(function(element){
                 if (element.scenario === '7'){
                     var img = document.createElement('img');
                     img.setAttribute('src', element.content);
                     gameDiv.appendChild(img);
+                    gameDiv.setAttribute('style', 'width: ' + element.width + 'px;');
                 }
             });
 
@@ -98,6 +114,10 @@
         var current = getCurrentActiveGame();
         resetGameDiv();
         setActiveGame(current.nextSibling);
+
+        if (current.nextSibling.nextSibling.nextSibling === null){
+            getGameData();
+        }
     }
 
     function init(){
@@ -111,11 +131,7 @@
             }
         });
 
-        getGameData(new Date, function(err, response){
-            console.log(response);
-            gameData = response.data.games;
-            addGamesToCarousel(gameData, function(){})
-        })
+        getGameData();
     }
 
     init();
