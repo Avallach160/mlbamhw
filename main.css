@@ -1,0 +1,61 @@
+html {
+    background: url("http://mlb.mlb.com/mlb/images/devices/ballpark/1920x1080/1.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+h1 {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+p{
+    text-align: center;
+    font-size: .6em;
+}
+
+.carouselWrapper {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+#carousel {
+    color: white;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.game {
+    padding: 10px;
+}
+
+.active {
+    -webkit-transform: scale(1.25); /* Saf3.1+, Chrome */
+    -moz-transform: scale(1.25); /* FF3.5+ */
+    -ms-transform: scale(1.25); /* IE9 */
+    -o-transform: scale(1.25); /* Opera 10.5+ */
+    transform: scale(1.25);
+    margin-top: -20px;
+}
